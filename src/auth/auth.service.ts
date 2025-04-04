@@ -1,59 +1,83 @@
-import { LoginDTO, RegisterDTO } from './dto';
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  LoginDTO,
+  LoginResponseDto,
+  RegisterDTO,
+  RegisterResponseDto,
+} from './dto';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { generateToken } from './utils/jwt/jwt-funcionalities';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { JwtPayload } from './jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        private readonly prisma: PrismaService,
-        private readonly jwt: JwtService,
-        private readonly config: ConfigService, 
-    ) {}
+  private readonly saltRounds: number;
 
-    async register(RegisterDTO: RegisterDTO) {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+    private readonly config: ConfigService,
+  ) {
+    this.saltRounds = parseInt(config.get<string>('SALT_ROUNDS', '10'), 10);
+  }
 
-        try{
-          const { username, email, password } = RegisterDTO;
-          const salt = await bcrypt.genSalt();
-          const hashedPassword = await bcrypt.hash(password, salt);
-          
-          const user = await this.prisma.user.create({
-              data : {
-                  username,
-                  email,
-                  password: hashedPassword,
-              }
-          });
+  async register(registerDTO: RegisterDTO): Promise<RegisterResponseDto> {
+    const { username, email, password } = registerDTO;
+    const hashedPassword = await bcrypt.hash(password, this.saltRounds);
 
-          return user;
+    try {
+      const user = await this.prisma.user.create({
+        data: {
+          username,
+          email,
+          password: hashedPassword,
+        },
+      });
 
-        }
-        catch (error) {
-          throw new ForbiddenException('User already exists');
-        }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password: _, ...rest } = user;
+      return {
+        message: 'User created successfully',
+        data: rest,
+      };
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          'User with this email or username already exists',
+        );
+      }
+      throw error;
+    }
+  }
 
+  async login(loginDto: LoginDTO): Promise<LoginResponseDto> {
+    const { email, password } = loginDto;
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      throw new ForbiddenException('Credentials incorrect');
     }
 
-    async login(loginDto: LoginDTO) : Promise<{ access_token: string }> {
-        const { email, password } = loginDto;
-        const user = await this.prisma.user.findUnique({
-            where: { email },
-        });
+    return {
+      access_token: await this.generateAccessToken(user.id),
+    };
+  }
 
-        if (!user) {
-            throw new ForbiddenException('Credentials incorrect');
-        }
-
-        const passwordMatches = await bcrypt.compare(password, user.password);
-        if (!passwordMatches) {
-            throw new ForbiddenException('Credentials incorrect');
-        }
-
-        return await generateToken(user.id, this.jwt);
-    }
-
+  private async generateAccessToken(userId: string) {
+    const payload: JwtPayload = { id: userId };
+    const access_token = await this.jwtService.signAsync(payload);
+    return access_token;
+  }
 }
