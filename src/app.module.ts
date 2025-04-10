@@ -5,6 +5,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { configSchema } from './config-schema';
 import { CvModule } from './cv/cv.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CvModule } from './cv/cv.module';
     AuthModule,
     UserModule,
     CvModule,
+    FileUploadModule,
   ],
   controllers: [],
   providers: [],
