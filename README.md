@@ -2,97 +2,69 @@
 
 This is a **NestJS-based web application** for managing CVs and resumes. It features secure user authentication, role-based access control, image uploads, and a PostgreSQL database for persistent storage.
 
----
-
 ## 🚀 Features
 
 - 🔐 **JWT-based authentication**
 - 👤 **Role-based access (Admin & User)**
 - 📄 **CRUD operations for CVs**
-- 🔍 **Filtering by name, firstname, job, and age**
-- 📷 **Image upload with validation (.jpg, .jpeg, .png)**
-- 📦 **PostgreSQL integration via Docker**
+- 🔍 **Advanced filtering** (name, firstname, job, age)
+- 📷 **Image upload with validation** (.jpg, .jpeg, .png)
+- 📦 **PostgreSQL integration** via Docker
 - 📃 **Generic pagination utility**
-
----
+- 📚 **Interactive API documentation** with Swagger UI
+- 🛡️ **Validation pipes** for data integrity
+- � **Rate limiting** for API protection
 
 ## ⚙️ Prerequisites
 
 Ensure the following tools are installed:
 
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
-- [Node.js & npm](https://nodejs.org/)
+- [Docker](https://www.docker.com/) (v20.10+)
+- [Docker Compose](https://docs.docker.com/compose/) (v2.5+)
+- [Node.js](https://nodejs.org/) (v18+)
+- [npm](https://www.npmjs.com/) (v9+)
 - [NestJS CLI](https://docs.nestjs.com/cli/overview)  
-  Install it globally:  
+  Install globally with:  
   ```bash
   npm install -g @nestjs/cli
   ```
 
----
-
 ## 🛠️ Setup Instructions
 
-Follow these steps to run the app locally:
-
+### 1. Clone and Configure
 ```bash
-# 1. Clone the repository
 git clone https://github.com/safina57/TP1-Nest.git
 cd TP1-Nest
+```
 
-# 2. Create a .env file in the root directory and add the following:
+### 2. Environment Setup
+Create `.env` file:
+```bash
 DATABASE_URL="postgresql://postgres:mysecurepassword@localhost:5435/ApplicationDB"
-JWT_SECRET=your_jwt_secret_key_here
+JWT_SECRET=strong_jwt_secret_token
+```
 
-# 3. Start the PostgreSQL container
+### 3. Start Services
+```bash
 docker compose up --build -d
-
-# 4. Install dependencies
 npm install
-
-# 5. Run the NestJS application
 npm run start:dev
 ```
 
----
+## 📚 API Documentation (Swagger UI)
 
-## 📁 Directory Structure
+Access interactive documentation at:  
+http://localhost:3000/api
 
-```
-src/
-├── auth/               # JWT auth logic
-├── common/             # Shared utilities (guards, interceptors, etc.)
-├── resumes/            # CV CRUD module
-├── users/              # User management
-├── main.ts             # App entry point
-.env                    # Environment variables
-docker-compose.yml      # Docker services (PostgreSQL)
-public/uploads/         # Uploaded images (served statically)
-```
 
----
+### Endpoint Categories:
+- **Auth**: User registration and login
+- **Users**: Profile management
+- **CVs**: Resume operations
+- **Uploads**: Image handling
 
-## 🖼️ Image Upload
 
-- Accepts: `.jpg`, `.jpeg`, `.png`
-- Max file size: `1MB`
-- Uploads are saved to: `public/uploads`
-- This folder is **served statically** by NestJS
+## 📜 License
 
----
+This project is licensed under the MIT License.
 
-## 🔐 Roles & Access
-
-- **Admin**:
-  - Can access and manage all CVs.
-- **User**:
-  - Can only manage their own CVs.
-
----
-
-## 🧪 Example `.env` File
-
-```env
-DATABASE_URL="postgresql://postgres:mysecurepassword@localhost:5435/ApplicationDB"
-JWT_SECRET=my_super_secret_key
-```
