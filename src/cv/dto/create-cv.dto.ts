@@ -6,6 +6,5 @@ export class CreateCvDto {
     cin: string;
     job: string;
     path: string;
-    userId: string; // Add this
   }
 

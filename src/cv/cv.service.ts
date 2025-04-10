@@ -74,15 +74,13 @@ export class CvService {
   // Delete a CV via its ID
   // Only the user that inserted the CV can delete it
   async remove(id: string, userId: string): Promise<void> {
-    const cv = await this.findOne(id);
+    const cv = await this.prisma.cv.findUnique({ where: { id } });
     if (!cv) {
       throw new NotFoundException('CV not found');
     }
     if (cv.userId !== userId) {
       throw new ForbiddenException('You can only delete your own CV');
     }
-    await this.prisma.cv.delete({
-      where: { id },
-    });
+    await this.prisma.cv.delete({ where: { id } });
   }
 }
