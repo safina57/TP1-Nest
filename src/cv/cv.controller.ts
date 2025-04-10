@@ -6,6 +6,7 @@ import { UpdateCvDto } from './dto/update-cv.dto';
 import { GetCvQueryDto } from './dto/get-cv-query.dto';
 // import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Adjust path based on your structure
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { FileUploadService } from '../file-upload/file-upload.service';
 
 // Custom decorator to extract userId from JWT payload
 export const UserId = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
@@ -13,9 +14,14 @@ export const UserId = createParamDecorator((data: unknown, ctx: ExecutionContext
   return request.user.userId; // Assumes userId is in request.user.userId from JwtStrategy
 });
 
+
+
 @Controller('cv')
 export class CvController {
-  constructor(private readonly cvService: CvService) {}
+  constructor(
+    private readonly cvService: CvService,
+    private readonly fileUploadService: FileUploadService
+  ) {}
 
   // Fetch CVs based on query params
   @Get()
