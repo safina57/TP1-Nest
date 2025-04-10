@@ -4,7 +4,7 @@ import { CvService } from './cv.service';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { GetCvQueryDto } from './dto/get-cv-query.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Adjust path based on your structure
+// import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Adjust path based on your structure
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 // Custom decorator to extract userId from JWT payload
@@ -24,21 +24,21 @@ export class CvController {
   }
 
   // Create a new CV (authenticated user)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post()
   createCV(@Body() createCvDto: CreateCvDto, @UserId() userId: string) {
     return this.cvService.create(createCvDto, userId);
   }
 
   // Update a CV (only by the owner)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Put(':id')
   updateCV(@Param('id') id: string, @Body() updateCvDto: UpdateCvDto, @UserId() userId: string) {
     return this.cvService.update(id, updateCvDto, userId);
   }
 
   // Delete a CV (only by the owner)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Delete(':id')
   deleteCV(@Param('id') id: string, @UserId() userId: string) {
     return this.cvService.remove(id, userId);
