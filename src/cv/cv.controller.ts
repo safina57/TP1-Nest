@@ -16,6 +16,8 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { FileUploadService } from '../file-upload/file-upload.service';
 import { ImageValidationPipe } from '../file-upload/pipes/image_validation.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
+import {  BadRequestException } from '@nestjs/common';
+import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 
 
 // Custom decorator to extract userId from JWT payload
@@ -63,7 +65,27 @@ export class CvController {
   // TODO @safina57 UseGuards(JwtAuthGuard) Guards are commented out for now
   @Post('upload-image')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadImage( @UploadedFile(new ImageValidationPipe()) file: Express.Multer.File) {
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'File upload',
+    type: 'multipart/form-data',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  async uploadImage(
+    @UploadedFile(new ImageValidationPipe()) file?: Express.Multer.File
+  ) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    
     const savedImagePath = await this.fileUploadService.saveImage(file);
     return { message: 'Image uploaded successfully', path: savedImagePath };
   }
