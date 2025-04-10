@@ -80,12 +80,8 @@ export class CvController {
     },
   })
   async uploadImage(
-    @UploadedFile(new ImageValidationPipe()) file?: Express.Multer.File
+    @UploadedFile(new ImageValidationPipe()) file: Express.Multer.File
   ) {
-    if (!file) {
-      throw new BadRequestException('No file uploaded');
-    }
-    
     const savedImagePath = await this.fileUploadService.saveImage(file);
     return { message: 'Image uploaded successfully', path: savedImagePath };
   }
