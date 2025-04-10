@@ -2,7 +2,6 @@
 
 This is a **NestJS-based web application** for managing CVs and resumes. It features secure user authentication, role-based access control, image uploads, and a PostgreSQL database for persistent storage.
 
-
 ## 🚀 Features
 
 - 🔐 **JWT-based authentication**
@@ -68,3 +67,4 @@ http://localhost:3000/api
 ## 📜 License
 
 This project is licensed under the MIT License.
+
