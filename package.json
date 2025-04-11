@@ -38,6 +38,7 @@
     "multer": "^1.4.5-lts.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
+    "tp1": "file:",
     "typeorm": "^0.3.22"
   },
   "devDependencies": {
@@ -86,10 +87,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
-
   "prisma": {
     "seed": "ts-node prisma/seed/seed.ts"
   }
-
-  
 }
