@@ -5,7 +5,8 @@ import {
   Query, Body, Param, 
   UseGuards , 
   UseInterceptors,
-  UploadedFile
+  UploadedFile,
+  BadRequestException
 } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { CreateCvDto } from './dto/create-cv.dto';
@@ -16,7 +17,6 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { FileUploadService } from '../file-upload/file-upload.service';
 import { ImageValidationPipe } from '../file-upload/pipes/image_validation.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {  BadRequestException } from '@nestjs/common';
 import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 
 
