@@ -11,7 +11,38 @@ services:
     volumes:
       - data:/var/lib/postgresql/data
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest-app
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://postgres:mysecurepassword@db:5432/ApplicationDB
+      JWT_SECRET: strong_jwt_secret_token
+    depends_on:
+      - db
+    command: npm run start:dev
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  studio:
+    image: node:18
+    container_name: prisma-studio
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "5555:5555"
+    command: sh -c "npm install && npx prisma studio"
+    environment:
+      DATABASE_URL: postgres://postgres:mysecurepassword@db:5432/ApplicationDB
+    depends_on:
+      - db
+
 volumes:
   data:
-    name:  tp1_nest
+    name: tp1_nest
     driver: local
