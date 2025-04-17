@@ -18,6 +18,8 @@ import { ImageValidationPipe } from '../file-upload/pipes/image_validation.pipe'
 import { FileInterceptor } from '@nestjs/platform-express';
 import {  BadRequestException } from '@nestjs/common';
 import { ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { GenericService } from 'src/common/services/generic.service';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 
 // Custom decorator to extract userId from JWT payload
@@ -32,8 +34,17 @@ export const UserId = createParamDecorator((data: unknown, ctx: ExecutionContext
 export class CvController {
   constructor(
     private readonly cvService: CvService,
-    private readonly fileUploadService: FileUploadService
+    private readonly fileUploadService: FileUploadService,
+    private readonly genericService: GenericService
   ) {}
+
+  @Get('all')
+  getAllCvs(@Query() query: PaginationQueryDto) {
+    return this.genericService.getAll('cv', {
+      skip: query.skip,
+      take: query.take,
+    });
+  }
 
   @Get()
   getCV(@Query() query: GetCvQueryDto) {
