@@ -18,16 +18,12 @@ import { HashingService } from './hashing/hashing.service';
 
 @Injectable()
 export class AuthService {
-  private readonly saltRounds: number;
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
-  ) {
-    this.saltRounds = parseInt(config.get<string>('SALT_ROUNDS', '10'), 10);
-  }
+  ) {}
 
   async register(registerDTO: RegisterDTO): Promise<RegisterResponseDto> {
     const hashedPassword = await this.hashingService.hash(registerDTO.password);
