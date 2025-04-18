@@ -11,7 +11,7 @@ import { CvService } from './cv.service';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { GetCvQueryDto } from './dto/get-cv-query.dto';
-// import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Adjust path based on your structure
+//import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Adjust path based on your structure
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { FileUploadService } from '../file-upload/file-upload.service';
 import { ImageValidationPipe } from '../file-upload/pipes/image_validation.pipe';
@@ -20,12 +20,13 @@ import {  BadRequestException } from '@nestjs/common';
 import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { GenericService } from 'src/common/services/generic.service';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 
 // Custom decorator to extract userId from JWT payload
 export const UserId = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
   const request = ctx.switchToHttp().getRequest();
-  return request.user.userId; // Assumes userId is in request.user.userId from JwtStrategy
+  return request.user.id; // Assumes userId is in request.user.userId from JwtStrategy
 });
 
 
@@ -38,7 +39,9 @@ export class CvController {
     private readonly genericService: GenericService
   ) {}
 
+
   @Get('all')
+  @UseGuards(JWTAuthGuard)
   getAllCvs(@Query() query: PaginationQueryDto) {
     return this.genericService.getAll('cv', {
       skip: query.skip,
@@ -47,11 +50,13 @@ export class CvController {
   }
 
   @Get()
+  @UseGuards(JWTAuthGuard)
   getCV(@Query() query: GetCvQueryDto) {
     return this.cvService.findByQuery(query);
   }
 
   @Post()
+  @UseGuards(JWTAuthGuard)
   createCV(@Body() body: CreateCvDto & { userId: string }) {
     // Validate that the request body exists and contains a userId,
     if (!body || !body.userId) {
@@ -62,6 +67,7 @@ export class CvController {
   }
 
   @Put(':id')
+  @UseGuards(JWTAuthGuard)
   updateCV(@Param('id') id: string, @Body() body: UpdateCvDto & { userId: string }) {
     // Validate that the request body exists and contains a userId,
     if (!body || !body.userId) {
@@ -72,6 +78,7 @@ export class CvController {
   }
 
   @Delete(':id')
+  @UseGuards(JWTAuthGuard)
   deleteCV(@Param('id') id: string, @Query('userId') userId: string) {
     if (!userId) {
       throw new BadRequestException('userId is required');
@@ -81,6 +88,7 @@ export class CvController {
 
   // TODO @safina57 UseGuards(JwtAuthGuard) Guards are commented out for now
   @Post('upload-image')
+  @UseGuards(JWTAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
