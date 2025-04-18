@@ -52,6 +52,7 @@ export class SeedService {
               uppercase: true,
             }).toString(),
           ),
+          role: 'USER',
         })),
     );
 

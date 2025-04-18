@@ -21,6 +21,8 @@ import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { GenericService } from 'src/common/services/generic.service';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { User } from '@prisma/client';
 
 
 // Custom decorator to extract userId from JWT payload
@@ -51,39 +53,33 @@ export class CvController {
 
   @Get()
   @UseGuards(JWTAuthGuard)
-  getCV(@Query() query: GetCvQueryDto) {
+  getCV(@Query() query: GetCvQueryDto, @GetUser() user: User) {
     return this.cvService.findByQuery(query);
+  }
+
+  @Get(':id')
+  @UseGuards(JWTAuthGuard)
+  getCVById(@Param('id') id: string) {
+    return this.cvService.findOne(id);
   }
 
   @Post()
   @UseGuards(JWTAuthGuard)
-  createCV(@Body() body: CreateCvDto & { userId: string }) {
-    // Validate that the request body exists and contains a userId,
-    if (!body || !body.userId) {
-      throw new BadRequestException('userId is required');
-    }
-    const { userId, ...createCvDto } = body;
-    return this.cvService.create(createCvDto, userId);
+  createCV(@Body() createCvDto: CreateCvDto, @GetUser() user: User) {
+    console.log('User ID:', user.id); // Log the user ID for debugging
+    return this.cvService.create(createCvDto, user.id);
   }
 
   @Put(':id')
   @UseGuards(JWTAuthGuard)
-  updateCV(@Param('id') id: string, @Body() body: UpdateCvDto & { userId: string }) {
-    // Validate that the request body exists and contains a userId,
-    if (!body || !body.userId) {
-      throw new BadRequestException('userId is required');
-    }
-    const { userId, ...updateCvDto } = body;
-    return this.cvService.update(id, updateCvDto, userId);
+  updateCV(@Param('id') id: string, @Body() updateCvDto: UpdateCvDto , @GetUser() user: User) {
+    return this.cvService.update(id, updateCvDto, user.id);
   }
 
   @Delete(':id')
   @UseGuards(JWTAuthGuard)
-  deleteCV(@Param('id') id: string, @Query('userId') userId: string) {
-    if (!userId) {
-      throw new BadRequestException('userId is required');
-    }
-    return this.cvService.remove(id, userId);
+  deleteCV(@Param('id') id: string, @GetUser() user: User) {
+    return this.cvService.remove(id, user.id);
   }
 
   // TODO @safina57 UseGuards(JwtAuthGuard) Guards are commented out for now

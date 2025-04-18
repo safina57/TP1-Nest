@@ -5,6 +5,5 @@ export class CreateCvDto {
     age: number;
     cin: string;
     job: string;
-    path: string;
   }
 

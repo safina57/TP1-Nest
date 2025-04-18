@@ -1,6 +1,6 @@
 // src/cv/cv.service.ts
 import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { Cv } from '@prisma/client'; // Use Prisma-generated type
+import { Cv } from '@prisma/client'; 
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -50,6 +50,7 @@ export class CvService {
       data: {
         // Copy all the fields from DTO into the new CV
         ...createCvDto,
+        path: '', // Set path to empty string for now
         userId, // Add userId to satisfy the required field in the Cv model
       },
     });
