@@ -8,7 +8,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
-} from '@nestjs/common';
+  UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -79,5 +79,19 @@ export class AuthService {
     const payload: JwtPayload = { id: userId };
     const access_token = await this.jwtService.signAsync(payload);
     return access_token;
+  }
+
+  async validateUser(payload: JwtPayload): Promise<any> {
+    let user: any;
+
+    try {
+      user = await this.prisma.user.findUnique({ where: { id: payload.id } });
+    } catch (error) {
+      throw new UnauthorizedException(
+        `There isn't any user with id: ${payload.id}`,
+      );
+    }
+
+    return user;
   }
 }
