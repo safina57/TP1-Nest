@@ -20,7 +20,7 @@ export class UserController {
   ) {}
 
   @Get('all')
-  @UseGuards(JWTAuthGuard)
+  @UseGuards(JWTAuthGuard, AdminGuard)
   getAllUsers(@Query() query: PaginationQueryDto) {
     return this.genericService.getAll('user', {
       skip: query.skip,
