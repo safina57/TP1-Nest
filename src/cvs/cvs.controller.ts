@@ -18,7 +18,6 @@ import { GetCvQueryDto } from './dto/get-cv-query.dto';
 import { FileUploadService } from '../file-upload/file-upload.service';
 import { ImageValidationPipe } from '../file-upload/pipes/image_validation.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { GenericService } from 'src/common/services/generic.service';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -35,8 +34,8 @@ export class CvsController {
 
   @Get('all')
   @UseGuards(JWTAuthGuard)
-  getAllCvs(@Query() query: PaginationQueryDto) {
-    return this.genericService.getAll('cv', {
+  getAllCvs(@Query() query: PaginationQueryDto, @GetUser() user: User) {
+    return this.genericService.getAll('cv', user, {
       skip: query.skip,
       take: query.take,
     });
@@ -56,9 +55,13 @@ export class CvsController {
 
   @Post()
   @UseGuards(JWTAuthGuard)
-  createCV(@Body() createCvDto: CreateCvDto, @GetUser() user: User) {
-    console.log('User ID:', user.id); // Log the user ID for debugging
-    return this.cvsService.create(createCvDto, user.id);
+  @UseInterceptors(FileInterceptor('file'))
+  async createCV(
+    @Body() createCvDto: CreateCvDto,
+    @UploadedFile(new ImageValidationPipe()) file: Express.Multer.File,
+    @GetUser() user: User,
+  ) {
+    return this.cvsService.create(createCvDto, file, user.id);
   }
 
   @Put(':id')
@@ -75,30 +78,5 @@ export class CvsController {
   @UseGuards(JWTAuthGuard)
   deleteCV(@Param('id') id: string, @GetUser() user: User) {
     return this.cvsService.remove(id, user.id);
-  }
-
-  // TODO @safina57 UseGuards(JwtAuthGuard) Guards are commented out for now
-  @Post('upload-image')
-  @UseGuards(JWTAuthGuard)
-  @UseInterceptors(FileInterceptor('file'))
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'File upload',
-    type: 'multipart/form-data',
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
-  async uploadImage(
-    @UploadedFile(new ImageValidationPipe()) file: Express.Multer.File,
-  ) {
-    const savedImagePath = await this.fileUploadService.saveImage(file);
-    return { message: 'Image uploaded successfully', path: savedImagePath };
   }
 }

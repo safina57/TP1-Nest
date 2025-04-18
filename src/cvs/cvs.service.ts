@@ -8,10 +8,14 @@ import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetCvQueryDto } from './dto/get-cv-query.dto';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
 
 @Injectable()
 export class CvsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly fileUploadService: FileUploadService,
+  ) {}
 
   async findByQuery(query: GetCvQueryDto): Promise<Cv[]> {
     const { string, age } = query;
@@ -40,11 +44,19 @@ export class CvsService {
     });
   }
 
-  async create(createCvDto: CreateCvDto, userId: string): Promise<Cv> {
+  async create(
+    createCvDto: CreateCvDto,
+    file: Express.Multer.File,
+    userId: string,
+  ): Promise<Cv> {
+    let path = '';
+    if (file) {
+      path = await this.fileUploadService.saveImage(file);
+    }
     return this.prisma.cv.create({
       data: {
         ...createCvDto,
-        path: '',
+        path,
         userId,
       },
     });

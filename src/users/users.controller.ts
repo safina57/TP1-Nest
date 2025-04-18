@@ -6,6 +6,7 @@ import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { Request } from 'express';
 import { User } from '@prisma/client';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
 
 interface AuthenticatedRequest extends Request {
   user: User;
@@ -20,8 +21,8 @@ export class UsersController {
 
   @Get('all')
   @UseGuards(JWTAuthGuard, AdminGuard)
-  getAllUsers(@Query() query: PaginationQueryDto) {
-    return this.genericService.getAll('user', {
+  getAllUsers(@Query() query: PaginationQueryDto, @GetUser() user: User) {
+    return this.genericService.getAll('user', user, {
       skip: query.skip,
       take: query.take,
     });
