@@ -1,5 +1,6 @@
 // src/cv/dto/update-cv.dto.ts
-import { IsOptional, IsString, IsInt } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsOptional, IsString, IsNumber } from 'class-validator';
 
 export class UpdateCvDto {
   @IsOptional()
@@ -11,7 +12,8 @@ export class UpdateCvDto {
   firstName?: string;
 
   @IsOptional()
-  @IsInt()
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
   age?: number;
 
   @IsOptional()

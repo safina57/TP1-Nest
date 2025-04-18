@@ -10,6 +10,6 @@ export class GetCvQueryDto {
 
   @IsOptional()
   @IsNumber()
-  @Transform(({ value }) => parseInt(value, 10))
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
   age?: number;
 }
