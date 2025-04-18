@@ -12,9 +12,9 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtPayload } from './jwt-payload.interface';
+import { HashingService } from './hashing/hashing.service';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +22,7 @@ export class AuthService {
 
   constructor(
     private readonly prisma: PrismaService,
+    private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
   ) {
@@ -29,14 +30,12 @@ export class AuthService {
   }
 
   async register(registerDTO: RegisterDTO): Promise<RegisterResponseDto> {
-    const { username, email, password } = registerDTO;
-    const hashedPassword = await bcrypt.hash(password, this.saltRounds);
+    const hashedPassword = await this.hashingService.hash(registerDTO.password);
 
     try {
       const user = await this.prisma.user.create({
         data: {
-          username,
-          email,
+          ...registerDTO,
           password: hashedPassword,
         },
       });
@@ -66,7 +65,10 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (
+      !user ||
+      !(await this.hashingService.compare(password, user.password))
+    ) {
       throw new ForbiddenException('Credentials incorrect');
     }
 
