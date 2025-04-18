@@ -71,12 +71,12 @@ export class AuthService {
     }
 
     return {
-      access_token: await this.generateAccessToken(user.id),
+      access_token: await this.generateAccessToken(user.id, user.role),
     };
   }
 
-  private async generateAccessToken(userId: string) {
-    const payload: JwtPayload = { id: userId };
+  private async generateAccessToken(userId: string, role: string) {
+    const payload: JwtPayload = { id: userId, role: role};
     const access_token = await this.jwtService.signAsync(payload);
     return access_token;
   }
