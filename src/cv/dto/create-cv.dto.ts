@@ -1,9 +1,25 @@
+import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateCvDto {
-    name: string;
-    firstName: string;
-    age: number;
-    cin: string;
-    job: string;
-  }
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
+  @IsString()
+  @IsNotEmpty()
+  firstName: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
+  age: number;
+
+  @IsNotEmpty()
+  @IsString()
+  cin: string;
+
+  @IsNotEmpty()
+  @IsString()
+  job: string;
+}

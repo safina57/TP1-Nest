@@ -1,22 +1,23 @@
-// src/cv/cv.controller.ts
-import { 
-  Controller, 
-  Get, Post, Put, Delete, 
-  Query, Body, Param, 
-  UseGuards , 
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Query,
+  Body,
+  Param,
+  UseGuards,
   UseInterceptors,
-  UploadedFile
+  UploadedFile,
 } from '@nestjs/common';
 import { CvService } from './cv.service';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { GetCvQueryDto } from './dto/get-cv-query.dto';
-//import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // Adjust path based on your structure
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { FileUploadService } from '../file-upload/file-upload.service';
 import { ImageValidationPipe } from '../file-upload/pipes/image_validation.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {  BadRequestException } from '@nestjs/common';
 import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { GenericService } from 'src/common/services/generic.service';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
@@ -24,23 +25,13 @@ import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from '@prisma/client';
 
-
-// Custom decorator to extract userId from JWT payload
-export const UserId = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
-  const request = ctx.switchToHttp().getRequest();
-  return request.user.id; // Assumes userId is in request.user.userId from JwtStrategy
-});
-
-
-
 @Controller('cv')
 export class CvController {
   constructor(
     private readonly cvService: CvService,
     private readonly fileUploadService: FileUploadService,
-    private readonly genericService: GenericService
+    private readonly genericService: GenericService,
   ) {}
-
 
   @Get('all')
   @UseGuards(JWTAuthGuard)
@@ -53,7 +44,7 @@ export class CvController {
 
   @Get()
   @UseGuards(JWTAuthGuard)
-  getCV(@Query() query: GetCvQueryDto, @GetUser() user: User) {
+  getCV(@Query() query: GetCvQueryDto) {
     return this.cvService.findByQuery(query);
   }
 
@@ -72,7 +63,11 @@ export class CvController {
 
   @Put(':id')
   @UseGuards(JWTAuthGuard)
-  updateCV(@Param('id') id: string, @Body() updateCvDto: UpdateCvDto , @GetUser() user: User) {
+  updateCV(
+    @Param('id') id: string,
+    @Body() updateCvDto: UpdateCvDto,
+    @GetUser() user: User,
+  ) {
     return this.cvService.update(id, updateCvDto, user.id);
   }
 
@@ -101,7 +96,7 @@ export class CvController {
     },
   })
   async uploadImage(
-    @UploadedFile(new ImageValidationPipe()) file: Express.Multer.File
+    @UploadedFile(new ImageValidationPipe()) file: Express.Multer.File,
   ) {
     const savedImagePath = await this.fileUploadService.saveImage(file);
     return { message: 'Image uploaded successfully', path: savedImagePath };
