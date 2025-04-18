@@ -11,7 +11,7 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
-import { CvService } from './cv.service';
+import { CvsService } from './cvs.service';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { GetCvQueryDto } from './dto/get-cv-query.dto';
@@ -25,10 +25,10 @@ import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from '@prisma/client';
 
-@Controller('cv')
-export class CvController {
+@Controller('cvs')
+export class CvsController {
   constructor(
-    private readonly cvService: CvService,
+    private readonly cvsService: CvsService,
     private readonly fileUploadService: FileUploadService,
     private readonly genericService: GenericService,
   ) {}
@@ -45,20 +45,20 @@ export class CvController {
   @Get()
   @UseGuards(JWTAuthGuard)
   getCV(@Query() query: GetCvQueryDto) {
-    return this.cvService.findByQuery(query);
+    return this.cvsService.findByQuery(query);
   }
 
   @Get(':id')
   @UseGuards(JWTAuthGuard)
   getCVById(@Param('id') id: string) {
-    return this.cvService.findOne(id);
+    return this.cvsService.findOne(id);
   }
 
   @Post()
   @UseGuards(JWTAuthGuard)
   createCV(@Body() createCvDto: CreateCvDto, @GetUser() user: User) {
     console.log('User ID:', user.id); // Log the user ID for debugging
-    return this.cvService.create(createCvDto, user.id);
+    return this.cvsService.create(createCvDto, user.id);
   }
 
   @Put(':id')
@@ -68,13 +68,13 @@ export class CvController {
     @Body() updateCvDto: UpdateCvDto,
     @GetUser() user: User,
   ) {
-    return this.cvService.update(id, updateCvDto, user.id);
+    return this.cvsService.update(id, updateCvDto, user.id);
   }
 
   @Delete(':id')
   @UseGuards(JWTAuthGuard)
   deleteCV(@Param('id') id: string, @GetUser() user: User) {
-    return this.cvService.remove(id, user.id);
+    return this.cvsService.remove(id, user.id);
   }
 
   // TODO @safina57 UseGuards(JwtAuthGuard) Guards are commented out for now

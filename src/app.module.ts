@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './users/users.module';
 import { configSchema } from './config-schema';
-import { CvModule } from './cv/cv.module';
+import { CvsModule } from './cvs/cvs.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
@@ -16,8 +16,8 @@ import { FileUploadModule } from './file-upload/file-upload.module';
     }),
     PrismaModule,
     AuthModule,
-    UserModule,
-    CvModule,
+    UsersModule,
+    CvsModule,
     FileUploadModule,
   ],
   controllers: [],

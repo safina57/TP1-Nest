@@ -1,21 +1,20 @@
 import { Controller, Get, Req, Query, UseGuards } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UsersService } from './users.service';
 import { GenericService } from 'src/common/services/generic.service';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
+import { Request } from 'express';
+import { User } from '@prisma/client';
 
-interface User {
-  id: string;
-  email: string;
-  username: string;
-  password: string;
+interface AuthenticatedRequest extends Request {
+  user: User;
 }
 
-@Controller('user')
-export class UserController {
+@Controller('users')
+export class UsersController {
   constructor(
-    private readonly userService: UserService,
+    private readonly usersService: UsersService,
     private readonly genericService: GenericService,
   ) {}
 
@@ -29,8 +28,7 @@ export class UserController {
   }
 
   @Get('current')
-  //@UseGuards(JWTAuthGuard)
-  getCurrentUser(@Req() req: any) {
+  getCurrentUser(@Req() req: AuthenticatedRequest) {
     const user = req.user;
     return {
       id: user.id,

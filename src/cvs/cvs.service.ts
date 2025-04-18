@@ -10,7 +10,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { GetCvQueryDto } from './dto/get-cv-query.dto';
 
 @Injectable()
-export class CvService {
+export class CvsService {
   constructor(private prisma: PrismaService) {}
 
   async findByQuery(query: GetCvQueryDto): Promise<Cv[]> {
