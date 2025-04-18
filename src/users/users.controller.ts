@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Query, UseGuards, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { GenericService } from 'src/common/services/generic.service';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
@@ -26,6 +26,12 @@ export class UsersController {
       skip: query.skip,
       take: query.take,
     });
+  }
+
+  @Get(':id')
+  @UseGuards(JWTAuthGuard, AdminGuard)
+  getUserById(@Param('id') id: string) {
+    return this.usersService.findOne(id);
   }
 
   @Get('current')

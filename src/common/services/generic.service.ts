@@ -6,33 +6,43 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class GenericService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll<T extends keyof PrismaService>(
+  async getAll<
+    T extends {
+      [K in keyof PrismaService]: PrismaService[K] extends {
+        findMany: (...args: any[]) => any;
+      }
+        ? K
+        : never;
+    }[keyof PrismaService],
+  >(
     model: T,
     user: User,
     options: {
       skip?: number;
       take?: number;
     } = {},
-  ): Promise<any[]> {
-    const prismaModel = this.prisma[model] as any;
+  ): Promise<ReturnType<PrismaService[T]['findMany']>> {
+    const prismaModel = this.prisma[model] as unknown as {
+      findMany: (...args: any[]) => ReturnType<PrismaService[T]['findMany']>;
+    };
 
-    if (!prismaModel?.findMany) {
-      throw new Error(`Model "${String(model)}" does not exist`);
+    if (!prismaModel) {
+      throw new Error(
+        `Model "${String(model)}" does not exist or does not support "findMany"`,
+      );
     }
 
-    if (user.role !== 'admin') {
-      return await prismaModel.findMany({
-        skip: options.skip,
-        take: options.take,
-        where: {
-          userId: user.id,
-        },
-      });
-    }
+    type QueryOptions = Parameters<PrismaService[T]['findMany']>[0];
 
-    return await prismaModel.findMany({
+    const queryOptions: QueryOptions = {
       skip: options.skip,
       take: options.take,
-    });
+    };
+
+    if (user.role !== 'admin') {
+      queryOptions.where = { userId: user.id };
+    }
+
+    return prismaModel.findMany(queryOptions);
   }
 }
