@@ -42,6 +42,7 @@
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
+    "tp1": "file:",
     "typeorm": "^0.3.22"
   },
   "devDependencies": {

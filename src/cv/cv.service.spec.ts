@@ -1,18 +1,39 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CvService } from './cv.service';
 
-describe('CvService', () => {
-  let service: CvService;
+// src/cv/cv.controller.spec.ts
+import { Test, TestingModule } from '@nestjs/testing';
+import { CvController } from './cv.controller';
+import { CvService } from './cv.service';
+import { BadRequestException } from '@nestjs/common';
+
+const mockService = {
+  create: jest.fn(),
+  update: jest.fn(),
+  remove: jest.fn(),
+};
+
+describe('CvController', () => {
+  let controller: CvController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CvService],
+      controllers: [CvController],
+      providers: [
+        { provide: CvService, useValue: mockService },
+      ],
     }).compile();
 
-    service = module.get<CvService>(CvService);
+    controller = module.get<CvController>(CvController);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  it('should throw if no userId is provided (create)', async () => {
+    await expect(controller.createCV({ name: 'test' } as any)).rejects.toThrow(BadRequestException);
+  });
+
+  it('should throw if no userId is provided (update)', async () => {
+    await expect(controller.updateCV('1', { name: 'test' } as any)).rejects.toThrow(BadRequestException);
+  });
+
+  it('should throw if no userId is provided (delete)', async () => {
+    await expect(controller.deleteCV('1', '')).rejects.toThrow(BadRequestException);
   });
 });
