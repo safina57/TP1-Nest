@@ -14,7 +14,7 @@ import { UpdateCvInput } from './dto/update-cv.input';
 import { Skill } from 'src/skills/entities/skill.entity';
 import { SkillsService } from 'src/skills/skills.service';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
-import { User } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import { ImageValidationPipe } from 'src/file-upload/pipes/image_validation.pipe';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { FileUpload } from 'graphql-upload/processRequest.mjs';
@@ -47,7 +47,10 @@ export class CvsResolver {
   }
 
   @Query(() => [Cv], { name: 'cvs' })
-  findAll() {
+  findAll(@GetUser() user: User) {
+    if (user.role === Role.USER) {
+      return this.cvsService.getCvsByUserId(user.id);
+    }
     return this.cvsService.findAll();
   }
 
@@ -62,7 +65,11 @@ export class CvsResolver {
   }
 
   @Mutation(() => Cv)
-  updateCv(@Args('updateCvInput') updateCvInput: UpdateCvInput, @Args('id', { type: () => ID }) id: string, @GetUser() user: User) {
+  updateCv(
+    @Args('updateCvInput') updateCvInput: UpdateCvInput,
+    @Args('id', { type: () => ID }) id: string,
+    @GetUser() user: User,
+  ) {
     return this.cvsService.update(id, { ...updateCvInput, userId: user.id });
   }
 

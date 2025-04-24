@@ -1,6 +1,6 @@
 import { InputType, Int, Field, ID } from '@nestjs/graphql';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 @InputType()
 export class CreateCvInput {
@@ -31,6 +31,7 @@ export class CreateCvInput {
   job: string;
 
   @IsNotEmpty()
+  @IsArray()
   @Field(() => [ID])
   skillIds: string[];
 }

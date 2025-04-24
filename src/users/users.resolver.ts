@@ -14,6 +14,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { Cv } from 'src/cvs/entities/cv.entity';
 import { CvsService } from 'src/cvs/cvs.service';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from '@prisma/client';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -27,7 +28,7 @@ export class UsersResolver {
     return this.usersService.create(createUserInput);
   }
 
-  @Roles('ADMIN')
+  @Roles(Role.ADMIN)
   @Query(() => [User], { name: 'users' })
   findAll() {
     return this.usersService.findAll();

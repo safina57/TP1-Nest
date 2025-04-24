@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Cv } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BaseService } from 'src/common/services/base.service';
@@ -14,20 +18,18 @@ export class CvsService extends BaseService<Cv> {
   override async create(
     data: CreateCvInput & { userId: string } & { path: string },
   ) {
-    const { skillIds, ...rest } = data;
+    const { skillIds = [], ...rest } = data;
     return this.prisma.cv.create({
       data: {
         ...rest,
         skills: {
-          connect: data.skillIds.map((skillId) => ({ id: skillId })),
+          connect: skillIds.map((skillId: string) => ({ id: skillId })),
         },
       },
     });
   }
 
-  override async update(
-    id: string, data: UpdateCvInput & { userId: string },
-  ) {
+  override async update(id: string, data: UpdateCvInput & { userId: string }) {
     const cv = await this.findOne(id);
     if (!cv) {
       throw new NotFoundException('CV not found');
@@ -36,13 +38,13 @@ export class CvsService extends BaseService<Cv> {
       throw new UnauthorizedException('You are not allowed to update this CV');
     }
 
-    const { skillIds, ...rest } = data;
+    const { skillIds = [], ...rest } = data;
     return this.prisma.cv.update({
       where: { id },
       data: {
         ...rest,
         skills: {
-          set: (data.skillIds ?? []).map((skillId) => ({ id: skillId })),
+          set: skillIds.map((skillId: string) => ({ id: skillId })),
         },
       },
     });

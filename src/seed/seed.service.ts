@@ -12,6 +12,7 @@ import {
 } from '@ngneat/falso';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class SeedService {
@@ -52,7 +53,7 @@ export class SeedService {
               uppercase: true,
             }).toString(),
           ),
-          role: 'USER',
+          role: Role.USER,
         })),
     );
 

@@ -25,10 +25,16 @@ type User {
   username: String!
   email: String!
   password: String!
-  role: String!
+  role: Role!
   createdAt: DateTime!
   updatedAt: DateTime!
   cvs: [Cv!]!
+}
+
+"""User roles"""
+enum Role {
+  USER
+  ADMIN
 }
 
 type Skill {

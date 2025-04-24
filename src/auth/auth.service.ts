@@ -15,6 +15,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtPayload } from './jwt-payload.interface';
 import { HashingService } from './hashing/hashing.service';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -73,7 +74,7 @@ export class AuthService {
     };
   }
 
-  private async generateAccessToken(userId: string, role: string) {
+  private async generateAccessToken(userId: string, role: Role) {
     const payload: JwtPayload = { id: userId, role: role };
     const access_token = await this.jwtService.signAsync(payload);
     return access_token;
