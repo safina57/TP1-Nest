@@ -8,8 +8,4 @@ export class UsersService extends BaseService<User> {
   constructor(prisma: PrismaService) {
     super(prisma, 'user');
   }
-
-  
-  
-  
 }

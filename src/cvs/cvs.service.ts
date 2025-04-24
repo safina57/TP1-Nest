@@ -4,10 +4,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { BaseService } from 'src/common/services/base.service';
 
 @Injectable()
-export class CvsService extends BaseService<Cv>{
-  constructor(
-    readonly prisma: PrismaService,
-  ) {
+export class CvsService extends BaseService<Cv> {
+  constructor(readonly prisma: PrismaService) {
     super(prisma, 'cv');
   }
 
@@ -30,5 +28,4 @@ export class CvsService extends BaseService<Cv>{
       },
     });
   }
-} 
-  
+}

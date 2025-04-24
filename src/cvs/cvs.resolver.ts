@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, ID, ResolveField, Parent } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { CvsService } from './cvs.service';
 import { Cv } from './entities/cv.entity';
 import { CreateCvInput } from './dto/create-cv.input';
@@ -10,7 +18,7 @@ import { SkillsService } from 'src/skills/skills.service';
 export class CvsResolver {
   constructor(
     private readonly cvsService: CvsService,
-    private readonly skillsService: SkillsService
+    private readonly skillsService: SkillsService,
   ) {}
 
   @Mutation(() => Cv)
@@ -24,22 +32,22 @@ export class CvsResolver {
   }
 
   @Query(() => Cv, { name: 'cv' })
-  findOne(@Args('id', { type: () => ID }) id: String) {
+  findOne(@Args('id', { type: () => ID }) id: string) {
     return this.cvsService.findOne(id);
   }
 
   @ResolveField('skills', () => [Skill])
-  async skills(@Parent() cv: Cv) {
+  skills(@Parent() cv: Cv) {
     return this.skillsService.getSkillsByCvId(cv.id);
   }
-  
+
   @Mutation(() => Cv)
   updateCv(@Args('updateCvInput') updateCvInput: UpdateCvInput) {
     return this.cvsService.update(updateCvInput.id, updateCvInput);
   }
 
   @Mutation(() => Cv)
-  removeCv(@Args('id', { type: () => ID }) id: String) {
+  removeCv(@Args('id', { type: () => ID }) id: string) {
     return this.cvsService.remove(id);
   }
 }

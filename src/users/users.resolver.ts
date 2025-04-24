@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, ID, ResolveField, Parent } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
@@ -11,7 +19,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
-    private readonly cvsService: CvsService
+    private readonly cvsService: CvsService,
   ) {}
 
   @Mutation(() => User)
@@ -31,7 +39,7 @@ export class UsersResolver {
   }
 
   @ResolveField('cvs', () => [Cv])
-  async books(@Parent() author: User) {
+  books(@Parent() author: User) {
     return this.cvsService.getCvsByUserId(author.id);
   }
 
