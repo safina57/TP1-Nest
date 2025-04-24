@@ -2,6 +2,24 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Cv {
+  id: ID!
+  name: String!
+  firstName: String!
+  age: Int!
+  cin: String!
+  job: String!
+  path: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  skills: [Skill!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type User {
   id: ID!
   username: String!
@@ -10,22 +28,36 @@ type User {
   role: String!
   createdAt: DateTime!
   updatedAt: DateTime!
+  cvs: [Cv!]!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
+type Skill {
+  id: ID!
+  designation: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  cvs: [Cv!]!
+}
 
 type Query {
   users: [User!]!
   user(id: ID!): User!
+  cvs: [Cv!]!
+  cv(id: ID!): Cv!
+  skills: [Skill!]!
+  skill(id: ID!): Skill!
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: ID!): User!
+  createCv(createCvInput: CreateCvInput!): Cv!
+  updateCv(updateCvInput: UpdateCvInput!): Cv!
+  removeCv(id: ID!): Cv!
+  createSkill(createSkillInput: CreateSkillInput!): Skill!
+  updateSkill(updateSkillInput: UpdateSkillInput!): Skill!
+  removeSkill(id: ID!): Skill!
 }
 
 input CreateUserInput {
@@ -38,5 +70,33 @@ input UpdateUserInput {
   username: String
   email: String
   password: String
+  id: ID!
+}
+
+input CreateCvInput {
+  name: String!
+  firstName: String!
+  age: Int!
+  cin: String!
+  job: String!
+  path: String!
+}
+
+input UpdateCvInput {
+  name: String
+  firstName: String
+  age: Int
+  cin: String
+  job: String
+  path: String
+  id: ID!
+}
+
+input CreateSkillInput {
+  designation: String!
+}
+
+input UpdateSkillInput {
+  designation: String
   id: ID!
 }

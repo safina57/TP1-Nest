@@ -8,6 +8,8 @@ import { UsersModule } from './users/users.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
+import { CvsModule } from './cvs/cvs.module';
+import { SkillsModule } from './skills/skills.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { join } from 'path';
     AuthModule,
     FileUploadModule,
     UsersModule,
+    CvsModule,
+    SkillsModule,
   ],
   controllers: [],
   providers: [],

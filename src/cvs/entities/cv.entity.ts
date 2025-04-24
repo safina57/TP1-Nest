@@ -1,30 +1,32 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
-import { Cv } from 'src/cvs/entities/cv.entity';
 
 @ObjectType()
-export class User {
+export class Cv {
   @Field(() => ID)
   id: string;
 
   @Field(() => String)
-  username?: string;
+  name: string;
 
   @Field(() => String)
-  email?: string;
+  firstName: string;
+
+  @Field(() => Int)
+  age: number;
 
   @Field(() => String)
-  password?: string;
+  cin: string;
 
   @Field(() => String)
-  role?: string;
+  job: string;
+
+  @Field(() => String)
+  path: string;
 
   @Field(() => Date)
-  createdAt?: Date;
+  createdAt: Date;
 
   @Field(() => Date)
-  updatedAt?: Date;
+  updatedAt: Date;
 
-  @Field(() => [Cv])
-  cvs?: Cv[];
-  
 }
