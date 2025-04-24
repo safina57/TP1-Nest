@@ -26,9 +26,4 @@ export class CreateCvInput {
   @IsNotEmpty()
   @Field(() => String)
   job: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Field(() => String)
-  path: string;
 }

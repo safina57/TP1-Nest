@@ -13,6 +13,8 @@ import { CreateCvInput } from './dto/create-cv.input';
 import { UpdateCvInput } from './dto/update-cv.input';
 import { Skill } from 'src/skills/entities/skill.entity';
 import { SkillsService } from 'src/skills/skills.service';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { User } from '@prisma/client';
 
 @Resolver(() => Cv)
 export class CvsResolver {
@@ -22,8 +24,11 @@ export class CvsResolver {
   ) {}
 
   @Mutation(() => Cv)
-  createCv(@Args('createCvInput') createCvInput: CreateCvInput) {
-    return this.cvsService.create(createCvInput);
+  createCv(
+    @GetUser() user: User,
+    @Args('createCvInput') createCvInput: CreateCvInput,
+  ) {
+    return this.cvsService.create({ userId: user.id, ...createCvInput });
   }
 
   @Query(() => [Cv], { name: 'cvs' })

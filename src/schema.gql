@@ -79,7 +79,6 @@ input CreateCvInput {
   age: Int!
   cin: String!
   job: String!
-  path: String!
 }
 
 input UpdateCvInput {
@@ -88,7 +87,6 @@ input UpdateCvInput {
   age: Int
   cin: String
   job: String
-  path: String
   id: ID!
 }
 
