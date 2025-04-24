@@ -10,11 +10,12 @@ export class CvsService extends BaseService<Cv> {
     super(prisma, 'cv');
   }
 
-  override create(data: CreateCvInput & { userId: string }): Promise<Cv> {
+  override async create(
+    data: CreateCvInput & { userId: string } & { path: string },
+  ) {
     return this.prisma.cv.create({
       data: {
         ...data,
-        path: '',
       },
     });
   }

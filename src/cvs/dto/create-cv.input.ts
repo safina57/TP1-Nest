@@ -1,5 +1,6 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 @InputType()
 export class CreateCvInput {
@@ -14,6 +15,8 @@ export class CreateCvInput {
   firstName: string;
 
   @IsNotEmpty()
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
   @Field(() => Int)
   age: number;
 
