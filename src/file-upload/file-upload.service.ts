@@ -1,19 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
-import * as path from 'path';
+import { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 @Injectable()
 export class FileUploadService {
-  async saveImage(file: Express.Multer.File): Promise<string> {
-    const uploadsDir = path.join(__dirname, '../../public/uploads');
-    
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
+  async saveImage(file: FileUpload): Promise<string> {
+    const { createReadStream, filename } = file;
+
+    const uploadDir = `${process.cwd()}/public/uploads`;
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
     }
+    const uniqueName = `${Date.now()}-${filename}`;
+    const path = `${uploadDir}/${uniqueName}`;
 
-    const filePath = path.join(uploadsDir, file.originalname);
+    const stream = createReadStream();
+    const writeStream = fs.createWriteStream(path);
 
-    fs.writeFileSync(filePath, file.buffer);
-    return filePath;
+    await new Promise((resolve, reject) => {
+      stream.pipe(writeStream);
+      stream.on('end', resolve);
+      stream.on('error', (error) => {
+        writeStream.close();
+        reject(error);
+      });
+    });
+
+    return path;
   }
 }
