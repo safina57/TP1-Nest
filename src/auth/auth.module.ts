@@ -8,6 +8,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { HashingService } from './hashing/hashing.service';
 import { BcryptService } from './hashing/bcrypt.service';
 import { UsersService } from 'src/users/users.service';
+import { APP_GUARD } from '@nestjs/core';
+import { JWTAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
 @Module({
   imports: [
     JwtModule.registerAsync({
@@ -32,6 +35,11 @@ import { UsersService } from 'src/users/users.service';
       provide: HashingService,
       useClass: BcryptService,
     },
+    {
+      provide: APP_GUARD,
+      useClass: JWTAuthGuard,
+    },
+    { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })
 export class AuthModule {}
