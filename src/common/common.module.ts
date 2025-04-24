@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { GenericService } from './services/generic.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { BaseService } from './services/base.service';
 
 @Module({
-  providers: [GenericService, PrismaService],
-  exports: [GenericService],
+  providers: [BaseService, PrismaService],
+  exports: [BaseService],
 })
 export class CommonModule {}

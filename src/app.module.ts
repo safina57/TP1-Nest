@@ -5,10 +5,9 @@ import { PrismaModule } from './prisma/prisma.module';
 import { configSchema } from './config-schema';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { UsersModule } from './users/users.module';
-import { CvsModule } from './cvs/cvs.module';
-import { SkillsModule } from './skills/skills.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -19,13 +18,12 @@ import { GraphQLModule } from '@nestjs/graphql';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     PrismaModule,
     AuthModule,
     FileUploadModule,
     UsersModule,
-    CvsModule,
-    SkillsModule,
   ],
   controllers: [],
   providers: [],
