@@ -1,0 +1,5 @@
+-- DropForeignKey
+ALTER TABLE "Cv" DROP CONSTRAINT "Cv_userId_fkey";
+
+-- AddForeignKey
+ALTER TABLE "Cv" ADD CONSTRAINT "Cv_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

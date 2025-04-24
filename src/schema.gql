@@ -79,6 +79,7 @@ input CreateCvInput {
   age: Int!
   cin: String!
   job: String!
+  skillIds: [ID!]!
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -90,6 +91,7 @@ input UpdateCvInput {
   age: Int
   cin: String
   job: String
+  skillIds: [ID!]
   id: ID!
 }
 

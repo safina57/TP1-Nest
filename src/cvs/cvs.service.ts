@@ -13,9 +13,13 @@ export class CvsService extends BaseService<Cv> {
   override async create(
     data: CreateCvInput & { userId: string } & { path: string },
   ) {
+    const { skillIds, ...rest } = data;
     return this.prisma.cv.create({
       data: {
-        ...data,
+        ...rest,
+        skills: {
+          connect: data.skillIds.map((skillId) => ({ id: skillId })),
+        },
       },
     });
   }
