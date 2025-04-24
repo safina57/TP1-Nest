@@ -62,12 +62,12 @@ export class CvsResolver {
   }
 
   @Mutation(() => Cv)
-  updateCv(@Args('updateCvInput') updateCvInput: UpdateCvInput) {
-    return this.cvsService.update(updateCvInput.id, updateCvInput);
+  updateCv(@Args('updateCvInput') updateCvInput: UpdateCvInput, @Args('id', { type: () => ID }) id: string, @GetUser() user: User) {
+    return this.cvsService.update(id, { ...updateCvInput, userId: user.id });
   }
 
   @Mutation(() => Cv)
-  removeCv(@Args('id', { type: () => ID }) id: string) {
-    return this.cvsService.remove(id);
+  removeCv(@Args('id', { type: () => ID }) id: string, @GetUser() user: User) {
+    return this.cvsService.deleteCv(id, user.id);
   }
 }

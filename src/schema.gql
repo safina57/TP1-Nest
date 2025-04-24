@@ -53,7 +53,7 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: ID!): User!
   createCv(createCvInput: CreateCvInput!, file: Upload!): Cv!
-  updateCv(updateCvInput: UpdateCvInput!): Cv!
+  updateCv(updateCvInput: UpdateCvInput!, id: ID!): Cv!
   removeCv(id: ID!): Cv!
   createSkill(createSkillInput: CreateSkillInput!): Skill!
   updateSkill(updateSkillInput: UpdateSkillInput!): Skill!
@@ -92,7 +92,6 @@ input UpdateCvInput {
   cin: String
   job: String
   skillIds: [ID!]
-  id: ID!
 }
 
 input CreateSkillInput {

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Cv } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BaseService } from 'src/common/services/base.service';
 import { CreateCvInput } from './dto/create-cv.input';
+import { UpdateCvInput } from './dto/update-cv.input';
 
 @Injectable()
 export class CvsService extends BaseService<Cv> {
@@ -22,6 +23,40 @@ export class CvsService extends BaseService<Cv> {
         },
       },
     });
+  }
+
+  override async update(
+    id: string, data: UpdateCvInput & { userId: string },
+  ) {
+    const cv = await this.findOne(id);
+    if (!cv) {
+      throw new NotFoundException('CV not found');
+    }
+    if (cv.userId !== data.userId) {
+      throw new UnauthorizedException('You are not allowed to update this CV');
+    }
+
+    const { skillIds, ...rest } = data;
+    return this.prisma.cv.update({
+      where: { id },
+      data: {
+        ...rest,
+        skills: {
+          set: (data.skillIds ?? []).map((skillId) => ({ id: skillId })),
+        },
+      },
+    });
+  }
+
+  async deleteCv(id: string, userId: string) {
+    const cv = await this.findOne(id);
+    if (!cv) {
+      throw new NotFoundException('CV not found');
+    }
+    if (cv.userId !== userId) {
+      throw new UnauthorizedException('You are not allowed to delete this CV');
+    }
+    return this.prisma.cv.delete({ where: { id } });
   }
 
   getCvsByUserId(userId: string): Promise<Cv[]> {
