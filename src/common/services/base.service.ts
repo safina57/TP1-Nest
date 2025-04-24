@@ -2,32 +2,29 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 
 Injectable();
-export class BaseService<M extends keyof PrismaService> {
+export class BaseService<T> {
   constructor(
     protected prisma: PrismaService,
-    protected model: M,
+    protected model: keyof PrismaService,
   ) {}
 
-  create(data: any): Promise<M> {
+  create(data: any): Promise<T> {
     return (this.prisma[this.model] as any).create({ data });
   }
 
-  findAll(): Promise<M[]> {
+  findAll(): Promise<T[]> {
     return (this.prisma[this.model] as any).findMany();
   }
 
-  findOne(id: string): Promise<M> {
+  findOne(id: string): Promise<T> {
     return (this.prisma[this.model] as any).findUnique({ where: { id } });
   }
 
-  update(id: string, data: any): Promise<M> {
-    return (this.prisma[this.model] as any).update({
-      where: { id },
-      data,
-    });
+  update(id: string, data: any): Promise<T> {
+    return (this.prisma[this.model] as any).update({ where: { id }, data });
   }
 
-  remove(id: string): Promise<M> {
+  remove(id: string): Promise<T> {
     return (this.prisma[this.model] as any).delete({ where: { id } });
   }
 }

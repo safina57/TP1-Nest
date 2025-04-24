@@ -28,5 +28,4 @@ export class Cv {
 
   @Field(() => Date)
   updatedAt: Date;
-
 }

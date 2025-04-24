@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, ID, ResolveField, Parent } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { SkillsService } from './skills.service';
 import { Skill } from './entities/skill.entity';
 import { CreateSkillInput } from './dto/create-skill.input';
@@ -10,7 +18,7 @@ import { CvsService } from 'src/cvs/cvs.service';
 export class SkillsResolver {
   constructor(
     private readonly skillsService: SkillsService,
-    private readonly cvsService: CvsService
+    private readonly cvsService: CvsService,
   ) {}
 
   @Mutation(() => Skill)
@@ -24,7 +32,7 @@ export class SkillsResolver {
   }
 
   @Query(() => Skill, { name: 'skill' })
-  findOne(@Args('id', { type: () => ID }) id: String) {
+  findOne(@Args('id', { type: () => ID }) id: string) {
     return this.skillsService.findOne(id);
   }
 
@@ -38,7 +46,7 @@ export class SkillsResolver {
   }
 
   @Mutation(() => Skill)
-  removeSkill(@Args('id', { type: () => ID }) id: String) {
+  removeSkill(@Args('id', { type: () => ID }) id: string) {
     return this.skillsService.remove(id);
   }
 }

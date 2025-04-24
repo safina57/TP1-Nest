@@ -1,4 +1,4 @@
-import { InputType, Int, Field, ID } from '@nestjs/graphql';
+import { InputType, Int, Field } from '@nestjs/graphql';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 @InputType()
@@ -31,5 +31,4 @@ export class CreateCvInput {
   @IsNotEmpty()
   @Field(() => String)
   path: string;
-
 }
