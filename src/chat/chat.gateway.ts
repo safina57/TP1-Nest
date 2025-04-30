@@ -46,6 +46,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleReaction(
     @MessageBody() payload: { messageId: string; emoji: string; userId: string },
   ) {
+    console.log('Received reaction:', payload); 
     const updated = await this.chatService.addReaction(
       payload.messageId,
       payload.emoji,
@@ -57,6 +58,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('loadHistory')
   async loadHistory(client: Socket) {
+    console.log('Loading message history for client');
     const history = await this.chatService.getAllMessages();
     client.emit('messageHistory', history);
   }
