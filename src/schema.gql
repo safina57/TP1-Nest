@@ -45,6 +45,15 @@ type Skill {
   cvs: [Cv!]!
 }
 
+type Message {
+  id: ID!
+  sender: String!
+  content: String!
+  timestamp: DateTime!
+  replyTo: String
+  reactions: [String!]!
+}
+
 type Query {
   users: [User!]!
   user(id: ID!): User!
@@ -52,6 +61,7 @@ type Query {
   cv(id: ID!): Cv!
   skills: [Skill!]!
   skill(id: ID!): Skill!
+  messages: [Message!]!
 }
 
 type Mutation {
@@ -64,6 +74,7 @@ type Mutation {
   createSkill(createSkillInput: CreateSkillInput!): Skill!
   updateSkill(updateSkillInput: UpdateSkillInput!): Skill!
   removeSkill(id: ID!): Skill!
+  sendMessage(input: CreateMessageInput!): Message!
 }
 
 input CreateUserInput {
@@ -107,4 +118,10 @@ input CreateSkillInput {
 input UpdateSkillInput {
   designation: String
   id: ID!
+}
+
+input CreateMessageInput {
+  sender: String!
+  content: String!
+  replyTo: ID
 }
