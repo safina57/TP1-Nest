@@ -24,12 +24,6 @@ import { ConfigService } from '@nestjs/config';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
 
-const pubSub = new RedisPubSub({
-  connection: {
-    host: 'localhost',
-    port: 6379,
-  },
-});
 
 @Resolver(() => Cv)
 export class CvsResolver {
@@ -67,7 +61,7 @@ export class CvsResolver {
       ...createCvInput,
       path,
     });
-    await pubSub.publish(
+    await this.pubSub.publish(
       'cvModified', 
       { cvModified: { type: 'CREATED', cv: newCv } }
     );
@@ -103,7 +97,7 @@ export class CvsResolver {
       id, 
       { ...updateCvInput, userId: user.id }
     );
-    pubSub.publish(
+    this.pubSub.publish(
       'cvModified', 
       { cvModified: { type: 'UPDATED', cv: updated_cv } }
     );
@@ -113,7 +107,7 @@ export class CvsResolver {
   @Mutation(() => Cv)
   removeCv(@Args('id', { type: () => ID }) id: string, @GetUser() user: User) {
     const deletedCv = this.cvsService.deleteCv(id, user.id);
-    pubSub.publish(
+    this.pubSub.publish(
       'cvModified', 
       { cvModified: { type: 'DELETED', cv: deletedCv } }
     );
@@ -125,7 +119,7 @@ export class CvsResolver {
     resolve: (payload) => payload.cvModified,}
   )
   cvModified() {
-    return pubSub.asyncIterator('cvModified');
+    return this.pubSub.asyncIterator('cvModified');
   }
 
   
