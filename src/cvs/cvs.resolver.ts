@@ -112,7 +112,12 @@ export class CvsResolver {
 
   @Mutation(() => Cv)
   removeCv(@Args('id', { type: () => ID }) id: string, @GetUser() user: User) {
-    return this.cvsService.deleteCv(id, user.id);
+    const deletedCv = this.cvsService.deleteCv(id, user.id);
+    pubSub.publish(
+      'cvModified', 
+      { cvModified: { type: 'DELETED', cv: deletedCv } }
+    );
+    return deletedCv;
   }
 
   @Subscription(
