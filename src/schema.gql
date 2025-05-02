@@ -45,6 +45,11 @@ type Skill {
   cvs: [Cv!]!
 }
 
+type CvModifiedPayload {
+  type: String!
+  cv: Cv!
+}
+
 type Query {
   users: [User!]!
   user(id: ID!): User!
@@ -110,5 +115,5 @@ input UpdateSkillInput {
 }
 
 type Subscription {
-  cvModified: Cv!
+  cvModified: CvModifiedPayload!
 }

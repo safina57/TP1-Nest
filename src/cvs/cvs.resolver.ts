@@ -23,6 +23,7 @@ import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { ConfigService } from '@nestjs/config';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
+import { CvModifiedPayload } from './dto/cv-modified-payload.dto';
 
 
 @Resolver(() => Cv)
@@ -114,10 +115,9 @@ export class CvsResolver {
     return deletedCv;
   }
 
-  @Subscription(
-    () => Cv, {
-    resolve: (payload) => payload.cvModified,}
-  )
+  @Subscription(() => CvModifiedPayload, {
+    resolve: (payload) => payload.cvModified,
+  })
   cvModified() {
     return this.pubSub.asyncIterator('cvModified');
   }
