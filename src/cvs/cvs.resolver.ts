@@ -56,7 +56,7 @@ export class CvsResolver {
   ) {
     const path = await this.fileUploadService.saveImage(file);
     
-    const newCv = this.cvsService.create({
+    const newCv = await this.cvsService.create({
       userId: user.id,
       ...createCvInput,
       path,
@@ -88,12 +88,12 @@ export class CvsResolver {
   }
 
   @Mutation(() => Cv)
-  updateCv(
+  async updateCv(
     @Args('updateCvInput') updateCvInput: UpdateCvInput,
     @Args('id', { type: () => ID }) id: string,
     @GetUser() user: User,
   ) {
-    const updated_cv = this.cvsService.update(
+    const updated_cv = await this.cvsService.update(
       id, 
       { ...updateCvInput, userId: user.id }
     );
@@ -105,8 +105,8 @@ export class CvsResolver {
   }
 
   @Mutation(() => Cv)
-  removeCv(@Args('id', { type: () => ID }) id: string, @GetUser() user: User) {
-    const deletedCv = this.cvsService.deleteCv(id, user.id);
+  async removeCv(@Args('id', { type: () => ID }) id: string, @GetUser() user: User) {
+    const deletedCv = await this.cvsService.deleteCv(id, user.id);
     this.pubSub.publish(
       'cvModified', 
       { cvModified: { type: 'DELETED', cv: deletedCv } }
