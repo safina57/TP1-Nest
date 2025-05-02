@@ -24,7 +24,7 @@ import { ConfigService } from '@nestjs/config';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
 import { CvModifiedPayload } from './dto/cv-modified-payload.dto';
-
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Resolver(() => Cv)
 export class CvsResolver {
@@ -114,7 +114,7 @@ export class CvsResolver {
     );
     return deletedCv;
   }
-
+  @Public()
   @Subscription(() => CvModifiedPayload, {
     resolve: (payload) => payload.cvModified,
   })
