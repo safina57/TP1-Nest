@@ -11,6 +11,15 @@ services:
     volumes:
       - data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+
   app:
     build:
       context: .
@@ -21,8 +30,11 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:mysecurepassword@db:5432/ApplicationDB
       JWT_SECRET: strong_jwt_secret_token
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - db
+      - redis
     command: npm run start:dev
     volumes:
       - .:/usr/src/app
@@ -45,4 +57,7 @@ services:
 volumes:
   data:
     name: tp1_nest
+    driver: local
+  redis_data:
+    name: tp1_redis
     driver: local
