@@ -20,9 +20,14 @@ import { ImageValidationPipe } from 'src/file-upload/pipes/image_validation.pipe
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { FileUpload } from 'graphql-upload/processRequest.mjs';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
-import { PubSub } from 'graphql-subscriptions';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
-const pubSub = new PubSub();
+const pubSub = new RedisPubSub({
+  connection: {
+    host: 'localhost',
+    port: 6379,
+  },
+});
 
 @Resolver(() => Cv)
 export class CvsResolver {
@@ -81,7 +86,15 @@ export class CvsResolver {
     @Args('id', { type: () => ID }) id: string,
     @GetUser() user: User,
   ) {
-    return this.cvsService.update(id, { ...updateCvInput, userId: user.id });
+    const updated_cv = this.cvsService.update(
+      id, 
+      { ...updateCvInput, userId: user.id }
+    );
+    pubSub.publish(
+      'cvModified', 
+      { cvModified: { type: 'UPDATED', cv: updated_cv } }
+    );
+    return updated_cv;
   }
 
   @Mutation(() => Cv)
