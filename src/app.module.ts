@@ -20,10 +20,13 @@ import { SkillsModule } from './skills/skills.module';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      subscriptions: {
-        'graphql-ws': true,
-      },
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      csrfPrevention: false,
+      subscriptions: {
+        'subscriptions-transport-ws': {
+          path: '/graphql',
+        },
+      },
     }),
     PrismaModule,
     AuthModule,
