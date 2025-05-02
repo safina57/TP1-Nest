@@ -21,6 +21,7 @@ import { SkillsModule } from './skills/skills.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      installSubscriptionHandlers: true,
       csrfPrevention: false,
       subscriptions: {
         'subscriptions-transport-ws': {
