@@ -108,3 +108,7 @@ input UpdateSkillInput {
   designation: String
   id: ID!
 }
+
+type Subscription {
+  cvModified: Cv!
+}

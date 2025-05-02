@@ -6,6 +6,7 @@ import {
   ID,
   ResolveField,
   Parent,
+  Subscription,
 } from '@nestjs/graphql';
 import { CvsService } from './cvs.service';
 import { Cv } from './entities/cv.entity';
@@ -19,6 +20,9 @@ import { ImageValidationPipe } from 'src/file-upload/pipes/image_validation.pipe
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { FileUpload } from 'graphql-upload/processRequest.mjs';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { PubSub } from 'graphql-subscriptions';
+
+const pubSub = new PubSub();
 
 @Resolver(() => Cv)
 export class CvsResolver {
@@ -39,11 +43,18 @@ export class CvsResolver {
     file: FileUpload,
   ) {
     const path = await this.fileUploadService.saveImage(file);
-    return this.cvsService.create({
+    
+    const newCv = this.cvsService.create({
       userId: user.id,
       ...createCvInput,
       path,
     });
+    await pubSub.publish(
+      'cvModified', 
+      { cvModified: { type: 'CREATED', cv: newCv } }
+    );
+    return newCv;
+
   }
 
   @Query(() => [Cv], { name: 'cvs' })
@@ -77,4 +88,14 @@ export class CvsResolver {
   removeCv(@Args('id', { type: () => ID }) id: string, @GetUser() user: User) {
     return this.cvsService.deleteCv(id, user.id);
   }
+
+  @Subscription(
+    () => Cv, {
+    resolve: (payload) => payload.cvModified,}
+  )
+  cvModified() {
+    return pubSub.asyncIterator('cvModified');
+  }
+
+  
 }
