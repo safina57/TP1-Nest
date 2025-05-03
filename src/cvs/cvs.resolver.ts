@@ -20,29 +20,19 @@ import { ImageValidationPipe } from 'src/file-upload/pipes/image_validation.pipe
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { FileUpload } from 'graphql-upload/processRequest.mjs';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
-import { ConfigService } from '@nestjs/config';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
-import Redis from 'ioredis';
 import { CvModifiedPayload } from './dto/cv-modified-payload.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => Cv)
 export class CvsResolver {
-  private readonly pubSub: RedisPubSub;
 
   constructor(
     private readonly cvsService: CvsService,
     private readonly skillsService: SkillsService,
     private readonly fileUploadService: FileUploadService,
-    private readonly configService: ConfigService
+    private readonly pubSub: PubSub,
   ) {
-    const redisHost = configService.get<string>('REDIS_HOST');
-    const redisPort = configService.get<number>('REDIS_PORT');
-
-    this.pubSub = new RedisPubSub({
-      publisher: new Redis({ host: redisHost, port: redisPort }),
-      subscriber: new Redis({ host: redisHost, port: redisPort }),
-    });
   }
 
   @Mutation(() => Cv)
@@ -119,8 +109,7 @@ export class CvsResolver {
     resolve: (payload) => payload.cvModified,
   })
   cvModified() {
-    return this.pubSub.asyncIterator('cvModified');
-  }
+    return this.pubSub.asyncIterableIterator('cvModified');
 
-  
+  }
 }

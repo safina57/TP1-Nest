@@ -10,6 +10,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { CvsModule } from './cvs/cvs.module';
 import { SkillsModule } from './skills/skills.module';
+import { PubSubModule } from './pub-sub/pub-sub.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { SkillsModule } from './skills/skills.module';
     UsersModule,
     CvsModule,
     SkillsModule,
+    PubSubModule,
   ],
   controllers: [],
   providers: [],
