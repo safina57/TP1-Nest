@@ -23,17 +23,16 @@ import { FileUploadService } from 'src/file-upload/file-upload.service';
 import { CvModifiedPayload } from './dto/cv-modified-payload.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { PubSub } from 'graphql-subscriptions';
+import { Inject } from '@nestjs/common';
 
 @Resolver(() => Cv)
 export class CvsResolver {
-
   constructor(
     private readonly cvsService: CvsService,
     private readonly skillsService: SkillsService,
     private readonly fileUploadService: FileUploadService,
-    private readonly pubSub: PubSub,
-  ) {
-  }
+    @Inject('PUB_SUB') private pubSub: PubSub,
+  ) {}
 
   @Mutation(() => Cv)
   async createCv(
@@ -46,18 +45,16 @@ export class CvsResolver {
     file: FileUpload,
   ) {
     const path = await this.fileUploadService.saveImage(file);
-    
+
     const newCv = await this.cvsService.create({
       userId: user.id,
       ...createCvInput,
       path,
     });
-    await this.pubSub.publish(
-      'cvModified', 
-      { cvModified: { type: 'CREATED', cv: newCv } }
-    );
+    await this.pubSub.publish('cvModified', {
+      cvModified: { type: 'CREATED', cv: newCv },
+    });
     return newCv;
-
   }
 
   @Query(() => [Cv], { name: 'cvs' })
@@ -84,24 +81,25 @@ export class CvsResolver {
     @Args('id', { type: () => ID }) id: string,
     @GetUser() user: User,
   ) {
-    const updated_cv = await this.cvsService.update(
-      id, 
-      { ...updateCvInput, userId: user.id }
-    );
-    this.pubSub.publish(
-      'cvModified', 
-      { cvModified: { type: 'UPDATED', cv: updated_cv } }
-    );
+    const updated_cv = await this.cvsService.update(id, {
+      ...updateCvInput,
+      userId: user.id,
+    });
+    await this.pubSub.publish('cvModified', {
+      cvModified: { type: 'UPDATED', cv: updated_cv },
+    });
     return updated_cv;
   }
 
   @Mutation(() => Cv)
-  async removeCv(@Args('id', { type: () => ID }) id: string, @GetUser() user: User) {
+  async removeCv(
+    @Args('id', { type: () => ID }) id: string,
+    @GetUser() user: User,
+  ) {
     const deletedCv = await this.cvsService.deleteCv(id, user.id);
-    this.pubSub.publish(
-      'cvModified', 
-      { cvModified: { type: 'DELETED', cv: deletedCv } }
-    );
+    await this.pubSub.publish('cvModified', {
+      cvModified: { type: 'DELETED', cv: deletedCv },
+    });
     return deletedCv;
   }
   @Public()
@@ -110,6 +108,5 @@ export class CvsResolver {
   })
   cvModified() {
     return this.pubSub.asyncIterableIterator('cvModified');
-
   }
 }
