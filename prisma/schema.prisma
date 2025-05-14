@@ -23,6 +23,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   cvs        Cv[]
+
+  events    CvEvent[]
 }
 
 model Cv {
@@ -40,6 +42,8 @@ model Cv {
   user      User     @relation(fields: [userId], references: [id])
 
   skills    Skill[]
+
+  events    CvEvent[]
 }
 
 model Skill {
@@ -52,4 +56,22 @@ model Skill {
 
 }
 
+// Enum for CvEvent type
+enum CvEventType {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+// Model for CvEvent
+model CvEvent {
+  id        String      @id @default(cuid())
+  type      CvEventType
+  timestamp DateTime    @default(now())
+  userId    String
+  cvId      String
+  user      User        @relation(fields: [userId], references: [id])
+  cv        Cv          @relation(fields: [cvId], references: [id])
+  createdAt DateTime    @default(now())
+}
 
