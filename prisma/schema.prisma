@@ -43,7 +43,6 @@ model Cv {
 
   skills    Skill[]
 
-  events    CvEvent[]
 }
 
 model Skill {
@@ -69,9 +68,8 @@ model CvEvent {
   type      CvEventType
   timestamp DateTime    @default(now())
   userId    String
-  cvId      String
+  cvId      String      
   user      User        @relation(fields: [userId], references: [id])
-  cv        Cv          @relation(fields: [cvId], references: [id])
   createdAt DateTime    @default(now())
 }
 

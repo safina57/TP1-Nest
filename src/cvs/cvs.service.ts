@@ -9,12 +9,14 @@ import { UpdateCvDto } from './dto/update-cv.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetCvQueryDto } from './dto/get-cv-query.dto';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { CvEventsService } from './cv-events.service';
 
 @Injectable()
 export class CvsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly fileUploadService: FileUploadService,
+    private readonly cvEventsService: CvEventsService,
   ) {}
 
   async findByQuery(query: GetCvQueryDto): Promise<Cv[]> {
@@ -53,13 +55,17 @@ export class CvsService {
     if (file) {
       path = await this.fileUploadService.saveImage(file);
     }
-    return this.prisma.cv.create({
+  
+    const cv = await this.prisma.cv.create({
       data: {
         ...createCvDto,
         path,
         userId,
       },
     });
+
+    await this.cvEventsService.logEvent(cv.id, userId, 'CREATE'); 
+    return cv;
   }
 
   async update(
@@ -74,10 +80,14 @@ export class CvsService {
     if (cv.userId !== userId) {
       throw new ForbiddenException('You can only update your own CV');
     }
-    return this.prisma.cv.update({
+
+    const updatedCv = await this.prisma.cv.update({
       where: { id },
       data: updateCvDto,
     });
+
+    await this.cvEventsService.logEvent(id, userId, 'UPDATE');
+    return updatedCv;
   }
 
   async remove(id: string, userId: string): Promise<{ message: string }> {
@@ -88,7 +98,10 @@ export class CvsService {
     if (cv.userId !== userId) {
       throw new ForbiddenException('You can only delete your own CV');
     }
+
+    await this.cvEventsService.logEvent(id, userId, 'DELETE');
     await this.prisma.cv.delete({ where: { id } });
+  
     return { message: 'CV deleted successfully' };
   }
 }

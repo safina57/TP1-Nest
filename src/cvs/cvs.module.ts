@@ -4,10 +4,11 @@ import { CvsController } from './cvs.controller';
 import { CvsService } from './cvs.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CommonModule } from 'src/common/common.module';
+import { CvEventsService } from './cv-events.service';
 
 @Module({
   controllers: [CvsController],
-  providers: [CvsService, PrismaService],
+  providers: [CvsService, PrismaService, CvEventsService],
   exports: [CvsService],
   imports: [FileUploadModule, CommonModule],
 })
