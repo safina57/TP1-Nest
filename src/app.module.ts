@@ -8,6 +8,7 @@ import { CvsModule } from './cvs/cvs.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { CvEventsModule } from './cv-events/cv-events.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       validationSchema: configSchema,
     }),
     PrismaModule,
+    ChatModule,
     AuthModule,
     UsersModule,
     CvsModule,
