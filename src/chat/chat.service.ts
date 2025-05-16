@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateMessageInput } from './dto/create-message.input';
+import { CreateMessageDto } from './dto/create-message.input';
 
 @Injectable()
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
-  saveMessage(input: CreateMessageInput) {
+  saveMessage(input: CreateMessageDto) {
     return this.prisma.message.create({
       data: {
         sender: input.sender,

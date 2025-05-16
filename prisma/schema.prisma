@@ -18,10 +18,11 @@ model User {
   username  String   @unique
   email     String   @unique
   password  String
+  role      String   @default("USER")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  role      Role     @default(USER)
-  cvs       Cv[]
+  cvs        Cv[]
+  events    CvEvent[]
 }
 
 model Cv {
@@ -32,19 +33,40 @@ model Cv {
   cin       String
   job       String
   path      String
-  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  skills    Skill[]  @relation("CvToSkill")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  skills    Skill[]
+  events    CvEvent[]
 }
 
 model Skill {
   id          String   @id @default(cuid())
   designation String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  cvs         Cv[]     @relation("CvToSkill")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cvs       Cv[]
+}
+
+// Enum for CvEvent type
+enum CvEventType {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+// Model for CvEvent
+model CvEvent {
+  id        String      @id @default(cuid())
+  type      CvEventType
+  timestamp DateTime    @default(now())
+  userId    String
+  cvId      String
+  createdAt DateTime    @default(now())
+
+  cv        Cv         @relation(fields: [cvId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
 }
 
 model Message {
@@ -56,9 +78,4 @@ model Message {
   reactions Json     @default("{}")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-enum Role {
-  USER
-  ADMIN
 }
