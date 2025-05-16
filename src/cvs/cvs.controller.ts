@@ -15,7 +15,6 @@ import { CvsService } from './cvs.service';
 import { CreateCvDto } from './dto/create-cv.dto';
 import { UpdateCvDto } from './dto/update-cv.dto';
 import { GetCvQueryDto } from './dto/get-cv-query.dto';
-import { FileUploadService } from '../file-upload/file-upload.service';
 import { ImageValidationPipe } from '../file-upload/pipes/image_validation.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GenericService } from 'src/common/services/generic.service';
@@ -24,12 +23,12 @@ import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from '@prisma/client';
 import { CvEventsService } from 'src/cv-events/cv-events.service';
+import { AdminGuard } from 'src/auth/guards/admin.guard';
 
 @Controller('cvs')
 export class CvsController {
   constructor(
     private readonly cvsService: CvsService,
-    private readonly fileUploadService: FileUploadService,
     private readonly genericService: GenericService,
     private readonly cvEventsService: CvEventsService,
   ) {}
@@ -89,8 +88,14 @@ export class CvsController {
   }
 
   @Get(':id/history')
-  @UseGuards(JWTAuthGuard)
+  @UseGuards(AdminGuard)
   async getCVHistory(@Param('id') id: string) {
     return this.cvEventsService.getHistoryForCv(id);
+  }
+
+  @Get(':userId/history')
+  @UseGuards(JWTAuthGuard)
+  async getUserCVHistory(@Param('userId') userId: string) {
+    return this.cvEventsService.getHistoryForUser(userId);
   }
 }

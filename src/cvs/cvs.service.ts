@@ -9,14 +9,12 @@ import { UpdateCvDto } from './dto/update-cv.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetCvQueryDto } from './dto/get-cv-query.dto';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
-import { CvEventsService } from '../cv-events/cv-events.service';
 
 @Injectable()
 export class CvsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly fileUploadService: FileUploadService,
-    private readonly cvEventsService: CvEventsService,
   ) {}
 
   async findByQuery(query: GetCvQueryDto): Promise<Cv[]> {
@@ -64,7 +62,6 @@ export class CvsService {
       },
     });
 
-    await this.cvEventsService.logEvent(cv.id, userId, 'CREATE'); 
     return cv;
   }
 
@@ -86,7 +83,6 @@ export class CvsService {
       data: updateCvDto,
     });
 
-    await this.cvEventsService.logEvent(id, userId, 'UPDATE');
     return updatedCv;
   }
 
@@ -99,9 +95,8 @@ export class CvsService {
       throw new ForbiddenException('You can only delete your own CV');
     }
 
-    await this.cvEventsService.logEvent(id, userId, 'DELETE');
     await this.prisma.cv.delete({ where: { id } });
-  
+
     return { message: 'CV deleted successfully' };
   }
 }

@@ -31,4 +31,11 @@ export class CvEventsService {
         orderBy: { timestamp: 'desc' },
         });
     }
+
+    async getHistoryForUser(userId: string) {
+        return this.prisma.cvEvent.findMany({
+        where: { userId },
+        orderBy: { timestamp: 'desc' },
+        });
+    }
 }
