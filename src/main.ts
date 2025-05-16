@@ -25,7 +25,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  console.log('DataBase Url:', process.env.DATABASE_URL);
   await app.listen(process.env.PORT ?? 3000);
   
 
