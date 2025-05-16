@@ -87,15 +87,15 @@ export class CvsController {
     return deleted;
   }
 
-  @Get(':id/history-cv')
+  @Get(':id/history')
   @UseGuards(AdminGuard)
   async getCVHistory(@Param('id') id: string) {
     return this.cvEventsService.getHistoryForCv(id);
   }
 
-  @Get(':userId/history-user')
+  @Get('/history')
   @UseGuards(JWTAuthGuard)
-  async getUserCVHistory(@Param('userId') userId: string) {
-    return this.cvEventsService.getHistoryForUser(userId);
+  async getUserCVHistory(@GetUser() user: User) {
+    return this.cvEventsService.getHistoryForUser(user.id);
   }
 }
