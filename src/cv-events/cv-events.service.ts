@@ -11,6 +11,7 @@ export class CvEventsService {
         type,
         cvId,
         userId,
+        timestamp: new Date(),
       }
     });
   }

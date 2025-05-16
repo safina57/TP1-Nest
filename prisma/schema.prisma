@@ -71,5 +71,8 @@ model CvEvent {
   cvId      String      
   user      User        @relation(fields: [userId], references: [id])
   createdAt DateTime    @default(now())
+
+  Cv        Cv       @relation(fields: [cvId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
 }
 

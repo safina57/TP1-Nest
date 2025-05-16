@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { configSchema } from './config-schema';
 import { CvsModule } from './cvs/cvs.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
+import { CvEventsModule } from './cv-events/cv-events.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { FileUploadModule } from './file-upload/file-upload.module';
     UsersModule,
     CvsModule,
     FileUploadModule,
+    CvEventsModule,
   ],
   controllers: [],
   providers: [],

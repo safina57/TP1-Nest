@@ -9,7 +9,7 @@ import { UpdateCvDto } from './dto/update-cv.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetCvQueryDto } from './dto/get-cv-query.dto';
 import { FileUploadService } from 'src/file-upload/file-upload.service';
-import { CvEventsService } from './cv-events.service';
+import { CvEventsService } from '../cv-events/cv-events.service';
 
 @Injectable()
 export class CvsService {
