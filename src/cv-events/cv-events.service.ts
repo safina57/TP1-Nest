@@ -15,4 +15,11 @@ export class CvEventsService {
       }
     });
   }
+
+    async getHistoryForCv(cvId: string) {
+        return this.prisma.cvEvent.findMany({
+        where: { cvId },
+        orderBy: { timestamp: 'desc' },
+        });
+    }
 }

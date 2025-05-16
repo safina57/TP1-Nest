@@ -88,4 +88,9 @@ export class CvsController {
     return deleted;
   }
 
+  @Get(':id/history')
+  @UseGuards(JWTAuthGuard)
+  async getCVHistory(@Param('id') id: string, @GetUser() user: User) {
+    return this.cvEventsService.getHistoryForCv(id);
+  }
 }
