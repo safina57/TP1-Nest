@@ -29,7 +29,9 @@
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.20",
+    "@nestjs/platform-socket.io": "^11.1.1",
     "@nestjs/swagger": "^11.1.4",
+    "@nestjs/websockets": "^11.1.1",
     "@ngneat/falso": "^7.3.0",
     "@prisma/client": "^6.6.0",
     "@types/multer": "^1.4.12",
@@ -43,6 +45,7 @@
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
+    "socket.io": "^4.8.1",
     "tp1": "file:",
     "typeorm": "^0.3.22"
   },
