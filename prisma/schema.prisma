@@ -68,8 +68,7 @@ model CvEvent {
   type      CvEventType
   timestamp DateTime    @default(now())
   userId    String
-  cvId      String      
-  user      User        @relation(fields: [userId], references: [id])
+  cvId      String
   createdAt DateTime    @default(now())
 
   Cv        Cv       @relation(fields: [cvId], references: [id])

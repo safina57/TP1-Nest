@@ -1,18 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class CvEventsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async logEvent(cvId: string, userId: string, type: 'CREATE' | 'UPDATE' | 'DELETE') {
-    return this.prisma.cvEvent.create({
+    await this.prisma.cvEvent.create({
       data: {
         type,
         cvId,
         userId,
         timestamp: new Date(),
       }
+    });
+    this.eventEmitter.emit('cv.event', {
+      type,
+      cvId,
+      userId,
+      timestamp: new Date(),
     });
   }
 

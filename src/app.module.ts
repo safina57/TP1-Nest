@@ -7,9 +7,11 @@ import { configSchema } from './config-schema';
 import { CvsModule } from './cvs/cvs.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { CvEventsModule } from './cv-events/cv-events.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
