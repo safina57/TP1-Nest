@@ -90,7 +90,7 @@ export class CvsController {
 
   @Get(':id/history')
   @UseGuards(JWTAuthGuard)
-  async getCVHistory(@Param('id') id: string, @GetUser() user: User) {
+  async getCVHistory(@Param('id') id: string) {
     return this.cvEventsService.getHistoryForCv(id);
   }
 }
