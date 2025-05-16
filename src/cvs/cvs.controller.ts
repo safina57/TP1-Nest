@@ -23,6 +23,7 @@ import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { JWTAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from '@prisma/client';
+import { CvEventsService } from 'src/cv-events/cv-events.service';
 
 @Controller('cvs')
 export class CvsController {
@@ -30,6 +31,7 @@ export class CvsController {
     private readonly cvsService: CvsService,
     private readonly fileUploadService: FileUploadService,
     private readonly genericService: GenericService,
+    private readonly cvEventsService: CvEventsService,
   ) {}
 
   @Get('all')
@@ -61,22 +63,29 @@ export class CvsController {
     @UploadedFile(new ImageValidationPipe()) file: Express.Multer.File,
     @GetUser() user: User,
   ) {
-    return this.cvsService.create(createCvDto, file, user.id);
+    const cv = await this.cvsService.create(createCvDto, file, user.id);
+    await this.cvEventsService.logEvent(cv.id, user.id, 'CREATE');
+    return cv;
   }
 
   @Put(':id')
   @UseGuards(JWTAuthGuard)
-  updateCV(
+  async updateCV(
     @Param('id') id: string,
     @Body() updateCvDto: UpdateCvDto,
     @GetUser() user: User,
   ) {
-    return this.cvsService.update(id, updateCvDto, user.id);
+    const updated = await this.cvsService.update(id, updateCvDto, user.id);
+    await this.cvEventsService.logEvent(id, user.id, 'UPDATE');
+    return updated;
   }
 
   @Delete(':id')
   @UseGuards(JWTAuthGuard)
-  deleteCV(@Param('id') id: string, @GetUser() user: User) {
-    return this.cvsService.remove(id, user.id);
+  async deleteCV(@Param('id') id: string, @GetUser() user: User) {
+    const deleted = await this.cvsService.remove(id, user.id);
+    await this.cvEventsService.logEvent(id, user.id, 'DELETE');
+    return deleted;
   }
+
 }
