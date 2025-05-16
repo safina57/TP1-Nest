@@ -12,7 +12,11 @@ import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
-    EventEmitterModule.forRoot(),
+    EventEmitterModule.forRoot(
+      {
+        wildcard: true,
+      }
+    ),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

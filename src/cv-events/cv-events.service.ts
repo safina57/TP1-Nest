@@ -17,7 +17,7 @@ export class CvEventsService {
         timestamp: new Date(),
       }
     });
-    this.eventEmitter.emit('cv.event', {
+    this.eventEmitter.emit(`CV.${type}`, {
       type,
       cvId,
       userId,

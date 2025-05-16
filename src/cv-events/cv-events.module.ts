@@ -2,9 +2,8 @@
 import { Module } from '@nestjs/common';
 import { CvEventsService } from './cv-events.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-
 @Module({
   providers: [CvEventsService, PrismaService],
-  exports: [CvEventsService],
+  exports: [CvEventsService]
 })
 export class CvEventsModule {}
