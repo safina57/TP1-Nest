@@ -40,4 +40,14 @@ export class CvEventsController {
 
   return merge(cvCreate, cvUpdate, cvDelete); 
   }
+
+  /* sse(@GetUser() user: User): Observable<MessageEvent> {
+    return fromEvent(this.eventEmitter, 'CV.*').pipe(
+      filter((event: any) => user.role === 'admin' || event.userId === user.id),
+      map((event: any) => {
+        const eventType = event.event;
+        return new MessageEvent(eventType, { data: event });
+      }),
+    );
+  } */
 }
