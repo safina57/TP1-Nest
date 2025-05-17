@@ -16,7 +16,7 @@ export class CvEventsController {
   ){}
   @UseGuards(JWTAuthGuard)
   @Sse('sse')
-  sse(@GetUser() user: User): Observable<MessageEvent>{
+  /* sse(@GetUser() user: User): Observable<MessageEvent>{
     const cvCreate = fromEvent(this.eventEmitter, 'CV.CREATE').pipe(
     filter((event: any) => {
       return user.role === 'admin' || event.userId === user.id;
@@ -39,15 +39,15 @@ export class CvEventsController {
   );
 
   return merge(cvCreate, cvUpdate, cvDelete); 
-  }
-
-  /* sse(@GetUser() user: User): Observable<MessageEvent> {
+  } */
+  
+  sse(@GetUser() user: User): Observable<MessageEvent> {
     return fromEvent(this.eventEmitter, 'CV.*').pipe(
       filter((event: any) => user.role === 'admin' || event.userId === user.id),
       map((event: any) => {
-        const eventType = event.event;
+        const eventType = event.type;
         return new MessageEvent(eventType, { data: event });
       }),
     );
-  } */
+  }
 }

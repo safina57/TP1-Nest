@@ -1,4 +1,3 @@
-// src/cv-events/cv-events.module.ts
 import { Module } from '@nestjs/common';
 import { CvEventsService } from './cv-events.service';
 import { PrismaService } from 'src/prisma/prisma.service';
